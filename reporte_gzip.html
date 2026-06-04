@@ -1,0 +1,127 @@
+
+<!DOCTYPE html>
+<html lang='es'>
+<head>
+<meta charset='UTF-8'>
+<title>Reporte GZip</title>
+
+<style>
+body {
+    font-family: Arial;
+    margin: 40px;
+    background: #f4f4f4;
+}
+
+.card {
+    background: white;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 2px 8px rgba(0,0,0,0.1);
+}
+
+h1 {
+    color: #1d3557;
+}
+
+pre {
+    background: black;
+    color: #00ff88;
+    padding: 15px;
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    border: 1px solid #ccc;
+    padding: 10px;
+}
+
+th {
+    background: #457b9d;
+    color: white;
+}
+</style>
+
+</head>
+
+<body>
+
+<h1>Reporte de Compresion GZip</h1>
+
+<div class='card'>
+<h2>Archivo Procesado</h2>
+
+<p><b>Original:</b> C:/Users/INTEL/Documents/UNA-Puno/9no SEMESTRE/CIBERSEGURIDAD/ejemplogzip/index.html</p>
+<p><b>Comprimido:</b> C:/Users/INTEL/Documents/UNA-Puno/9no SEMESTRE/CIBERSEGURIDAD/ejemplogzip/index.html.gz</p>
+
+</div>
+
+<div class='card'>
+<h2>Resultados</h2>
+
+<table>
+
+<tr>
+<th>Elemento</th>
+<th>Valor</th>
+</tr>
+
+<tr>
+<td>Tamano Original</td>
+<td>7987 bytes</td>
+</tr>
+
+<tr>
+<td>Tamano GZip</td>
+<td>2057 bytes</td>
+</tr>
+
+<tr>
+<td>Reduccion</td>
+<td>74.25%</td>
+</tr>
+
+</table>
+
+</div>
+
+<div class='card'>
+<h2>Cabecera GZip</h2>
+
+<p>
+Los bytes magicos de GZip son:
+</p>
+
+<pre>1F 8B</pre>
+
+</div>
+
+<div class='card'>
+<h2>Primeros Bytes Hexadecimales</h2>
+
+<pre>1f8b0808a6a7216a02ff696e6465782e68746d6c00cd59cd7622bb11dee79cbc83d2d9e49e0cff9e8967029c60fcc71ccc650cf6c4ecd4dd3208ab255d498d8d</pre>
+
+</div>
+
+<div class='card'>
+<h2>Explicacion</h2>
+
+<p>
+GZip utiliza Deflate internamente.
+</p>
+
+<ul>
+<li>LZ77 detecta patrones repetidos.</li>
+<li>Huffman reduce la cantidad de bits.</li>
+<li>GZip agrega cabecera y CRC-32.</li>
+</ul>
+
+</div>
+
+</body>
+</html>

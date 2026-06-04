@@ -10,7 +10,7 @@ if [ ! -f "backend/model/satellite_classifier.keras" ]; then
 fi
 
 # Construir e iniciar contenedores
-docker compose up -d --build
+docker compose -f docker-compose.prod.yml up -d --build
 
 echo ""
 echo "✅ Despliegue completado."
