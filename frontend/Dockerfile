@@ -3,6 +3,7 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install --legacy-peer-deps
 COPY . .
+RUN mkdir -p public
 ENV NEXT_PUBLIC_API_URL=/api/v1
 RUN npm run build
 
