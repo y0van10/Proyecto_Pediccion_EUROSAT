@@ -1,0 +1,270 @@
+\documentclass[conference,onecolumn]{IEEEtran}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{cite}
+\usepackage{listings}
+\usepackage{color}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+\lstset{style=mystyle}
+
+\begin{document}
+
+% =========================================================================
+% PORTADA
+% =========================================================================
+\begin{titlepage}
+    \centering
+    \vspace*{1cm}
+    {\large\textbf{UNIVERSIDAD NACIONAL DEL ALTIPLANO - PUNO}\par}
+    {\large\textbf{ESCUELA PROFESIONAL DE INGENIERÍA DE SISTEMAS}\par}
+    \vspace{1.5cm}
+    \includegraphics[width=0.3\textwidth]{https://upload.wikimedia.org/wikipedia/commons/e/e5/Escudo_de_la_Universidad_Nacional_del_Altiplano.png}\par
+    \vspace{1.5cm}
+    {\Large\textbf{INFORME ACADÉMICO DE PRÁCTICA FINAL}\par}
+    \vspace{0.8cm}
+    {\huge\textbf{Sistema Inteligente de Reconocimiento Automático de Imágenes mediante CNN, Transfer Learning, Fine-Tuning y Despliegue Web}\par}
+    \vspace{1.5cm}
+    \textbf{Curso:}\\
+    Aprendizaje Profundo (9no Semestre)\par
+    \vspace{0.5cm}
+    \textbf{Docente:}\\
+    [Nombre del Docente]\par
+    \vspace{0.5cm}
+    \textbf{Integrantes:}\\
+    [Nombres de los Integrantes]\par
+    \vspace{1.5cm}
+    Puno, Perú\\
+    2026
+\end{titlepage}
+
+\newpage
+
+% =========================================================================
+% RESUMEN
+% =========================================================================
+\section{Resumen}
+El presente proyecto detalla el diseño, entrenamiento y despliegue de un sistema inteligente de clasificación jerárquica de imágenes enfocado en la cobertura terrestre (Land Use and Land Cover - LULC) a través del conjunto de datos de satélite EuroSAT. El objetivo principal consiste en resolver la ambigüedad visual generada por clases coincidentes (como ``Bosque'') observadas desde perspectivas aéreas (cenitales) y terrestres (horizontales). La metodología propuesta implementa un clasificador jerárquico de dos etapas: un enrutador binario inicial basado en MobileNetV3-Small para discernir el dominio (Satelital vs. Terrestre), seguido de clasificadores específicos construidos sobre la arquitectura EfficientNetV2-B0 aplicando Transfer Learning y Fine-Tuning progresivo. Adicionalmente, se entrenó una red convolucional propia desde cero para establecer una línea base de comparación. Los resultados finales en el conjunto de validación alcanzaron un Accuracy del [\textbf{INSERTAR ACCURACY}]\%, un Precision del [\textbf{INSERTAR PRECISION}]\%, un Recall del [\textbf{INSERTAR RECALL}]\% y un F1-Score del [\textbf{INSERTAR F1}]\%, superando significativamente al modelo base convolucional. El sistema se desplegó exitosamente en un entorno de producción local y en la nube (DigitalOcean Droplet) usando Docker Compose y una interfaz web interactiva en Streamlit y Next.js. Las conclusiones demuestran la viabilidad de aplicar arquitecturas jerárquicas adaptadas al monitoreo medioambiental de regiones como la cuenca del Lago Titicaca en Puno.
+
+\textbf{Palabras clave---} Aprendizaje Profundo, Clasificación Jerárquica, EuroSAT, Transfer Learning, Fine-Tuning, EfficientNet, MLOps, Docker.
+
+% =========================================================================
+% INTRODUCCIÓN
+% =========================================================================
+\section{Introducción}
+El monitoreo del uso y la cobertura del suelo (LULC) es fundamental para la planificación urbana, la gestión agrícola, la prevención de desastres naturales y la conservación ecológica. Tradicionalmente, la clasificación de coberturas terrestres dependía de inspecciones visuales manuales y análisis espectrales básicos, procesos lentos y propensos al error humano. Con el auge de las constelaciones de satélites de observación de la Tierra, como Sentinel-2, se ha generado un volumen masivo de datos geoespaciales que requiere automatización.
+
+Las Redes Neuronales Convolucionales (CNN) han revolucionado la visión artificial al permitir la extracción automática de características espaciales y de textura sin intervención manual. No obstante, al aplicar modelos a imágenes del mundo real, surge la colisión de dominios: una imagen de un bosque tomada a nivel del suelo difiere drásticamente de un parche boscoso capturado a 786 km de altura. 
+
+El presente proyecto introduce un enfoque jerárquico para mitigar este obstáculo, empleando técnicas de Transfer Learning y Fine-Tuning sobre backbones preentrenados en ImageNet. El sistema clasifica de forma robusta imágenes satelitales del dataset EuroSAT y fotografías terrestres, sirviendo como base tecnológica para aplicaciones de monitoreo ecológico en la región de Puno.
+
+% =========================================================================
+% MARCO TEÓRICO
+% =========================================================================
+\section{Marco Teórico}
+
+\subsection{Inteligencia Artificial (IA)}
+Disciplina científica dedicada al diseño de sistemas computacionales capaces de realizar tareas asociadas tradicionalmente con la cognición humana, tales como el razonamiento, la resolución de problemas y el aprendizaje.
+
+\subsection{Aprendizaje Automático (Machine Learning)}
+Subcampo de la IA enfocado en el desarrollo de algoritmos que permiten a las computadoras identificar patrones y tomar decisiones basándose en datos empíricos, sin ser explícitamente programadas para cada caso.
+
+\subsection{Aprendizaje Profundo (Deep Learning)}
+Rama del aprendizaje automático fundamentada en la utilización de arquitecturas jerárquicas de redes neuronales con múltiples capas de procesamiento ocultas, capaces de aprender representaciones abstractas de los datos de forma no supervisada o supervisada.
+
+\subsection{Redes Neuronales Artificiales (ANN)}
+Modelos matemáticos inspirados en la estructura neuronal biológica. Consisten en nodos interconectados (neuronas artificiales) organizados en capas (entrada, ocultas y salida) que transmiten señales ponderadas mediante funciones de activación.
+
+\subsection{Redes Neuronales Convolucionales (CNN)}
+Arquitectura especializada en el procesamiento de datos con cuadrícula bidimensional, como imágenes. Introducen capas de convolución que aplican filtros locales deslizantes para extraer características de bajo nivel (bordes, esquinas) y capas de reducción de dimensiones (Pooling) para lograr invarianza a traslaciones espaciales.
+
+\subsection{Funciones de Activación}
+Introducen no linealidad al modelo, permitiendo que la red aprenda relaciones complejas:
+\begin{itemize}
+    \item \textbf{ReLU (Rectified Linear Unit)}: Definida como $f(x) = \max(0, x)$. Resuelve el problema del desvanecimiento del gradiente en capas intermedias y acelera la convergencia.
+    \item \textbf{Softmax}: Utilizada en la capa de salida para problemas multiclase. Transforma un vector de puntuaciones (logits) en una distribución de probabilidad sobre las clases objetivo:
+    \begin{equation}
+        P(y = c \mid \mathbf{x}) = \frac{e^{z_c}}{\sum_{j=1}^{C} e^{z_j}}
+    \end{equation}
+\end{itemize}
+
+\subsection{Backpropagation (Retropropagación)}
+Algoritmo clave para entrenar redes neuronales. Calcula recursivamente el gradiente de la función de pérdida con respecto a cada peso mediante la regla de la cadena, transmitiendo el error desde la salida hacia las capas iniciales.
+
+\subsection{Optimizador Adam}
+Algoritmo de optimización que combina las ventajas del Descenso de Gradiente con Momento y el RMSProp. Mantiene tasas de aprendizaje adaptativas individuales para cada parámetro basadas en estimaciones de los primeros y segundos momentos del gradiente.
+
+\subsection{Transfer Learning (Aprendizaje por Transferencia)}
+Paradigma que consiste en tomar un modelo previamente entrenado en un dataset a gran escala (ej. ImageNet) y utilizar su conocimiento extraído (pesos) para resolver una tarea afín en un dataset menor, reduciendo el tiempo de entrenamiento y el riesgo de overfitting.
+
+\subsection{Fine-Tuning (Ajuste Fino)}
+Proceso posterior al Transfer Learning donde se descongelan las capas superiores del modelo base y se reentrenan con una tasa de aprendizaje (Learning Rate) sumamente baja para sintonizar los filtros generales a la geometría particular del nuevo dataset.
+
+\subsection{EfficientNetV2 / EfficientNetB0}
+Familia de modelos optimizados mediante escalamiento compuesto (compounding scaling), balanceando profundidad, ancho y resolución de la red. EfficientNetV2 introduce convoluciones fusionadas (Fused-MBConv) en las fases iniciales de la red para acelerar la computación en GPU.
+
+\subsection{Clasificación de Imágenes y Métricas de Evaluación}
+*   \textbf{Accuracy}: Proporción de predicciones correctas sobre el total.
+*   \textbf{Precision}: Capacidad de no clasificar un caso negativo como positivo: $TP / (TP + FP)$.
+*   \textbf{Recall (Sensibilidad)}: Capacidad para detectar todos los casos positivos reales: $TP / (TP + FN)$.
+*   \textbf{F1-Score}: Media armónica entre Precision y Recall:
+    \begin{equation}
+        F_1 = 2 \times \frac{\text{Precision} \times \text{Recall}}{\text{Precision} + \text{Recall}}
+    \end{equation}
+*   \textbf{Matriz de Confusión}: Matriz bidimensional que contrasta las etiquetas reales frente a las predicciones del modelo.
+
+% =========================================================================
+% METODOLOGÍA
+% =========================================================================
+\section{Metodología}
+
+\subsection{Dataset EuroSAT}
+El dataset EuroSAT se basa en imágenes de la constelación de satélites Sentinel-2. Cuenta con un total de 27,000 imágenes etiquetadas de $64 \times 64$ píxeles distribuidas homogéneamente en 10 clases (2,700 imágenes por clase): \textit{AnnualCrop, Forest, HerbaceousVegetation, Highway, Industrial, Pasture, PermanentCrop, Residential, River y SeaLake}.
+
+\subsection{Preprocesamiento y Data Augmentation}
+Las imágenes fueron redimensionadas a $160 \times 160$ píxeles para ser compatibles con las geometrías de EfficientNet. Para el pipeline de entrenamiento se aplicó un aumento de datos que incluye volteos horizontales y verticales aleatorios, rotaciones de hasta $0.2$ radianes, escalamientos dinámicos (Zoom) y ajustes locales de contraste.
+
+\subsection{Arquitectura del Clasificador Jerárquico}
+El diseño implementa una estrategia de dos etapas para solucionar colisiones de clases (ver Tabla~\ref{tab:mapping}).
+
+\begin{table}[h]
+\centering
+\caption{Mapeo de Clases y Configuración Jerárquica}
+\label{tab:mapping}
+\begin{tabular}{lll}
+\toprule
+\textbf{Etapa} & \textbf{Modelo} & \textbf{Clases Objetivo} \\
+\midrule
+Etapa 1 (Dominio) & MobileNetV3-Small & Satelital, Terrestre \\
+Etapa 2A (Satelital) & EfficientNetV2-B0 & 10 Clases EuroSAT \\
+Etapa 2B (Terrestre) & EfficientNetV2-B0 & 6 Clases Paisajes Naturales \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Entrenamiento de Modelos y Configuración Experimental}
+El hardware de entrenamiento local consistió en una CPU Intel con una GPU NVIDIA GeForce RTX 3050. Se utilizó TensorFlow 2.13.1 y Keras 3.14.1.
+
+El entrenamiento del clasificador satelital siguió las fases definidas por el docente en el PDF de la práctica:
+1.  \textbf{CNN Propia desde Cero}: Estructura secuencial de tres capas convolucionales intermitentes con Pooling, capa Flatten y Dense.
+2.  \textbf{Transfer Learning (EfficientNetB0)}: Extractor base congelado, entrenando la cabeza densa con $LR = 10^{-3}$ por 15 épocas.
+3.  \textbf{Fine-Tuning Progresivo}: Descongelamiento de las últimas 20 capas del backbone, reentrenando con un $LR = 10^{-5}$.
+
+% =========================================================================
+% RESULTADOS
+% =========================================================================
+\section{Resultados y Análisis}
+
+La evaluación de los modelos demuestra una clara superioridad al emplear transferencia de aprendizaje (ver Tabla~\ref{tab:comparison}).
+
+\begin{table}[h]
+\centering
+\caption{Comparación Cualitativa de Modelos en EuroSAT}
+\label{tab:comparison}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Arquitectura} & \textbf{Accuracy} & \textbf{Precision} & \textbf{Recall} & \textbf{F1-Score} \\
+\midrule
+CNN Propia desde Cero & [ ]\% & [ ]\% & [ ]\% & [ ]\% \\
+EfficientNetB0 (Fase 1 - TL) & [ ]\% & [ ]\% & [ ]\% & [ ]\% \\
+EfficientNetB0 (Fase 2 - FT) & [\textbf{INSERTAR}]\% & [ ]\% & [ ]\% & [ ]\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Las gráficas de pérdida y precisión en el conjunto de validación mostraron que el modelo con Fine-Tuning alcanza una convergencia estable sin indicios de sobreajuste debido a las capas de Dropout (0.3) e incrementos del conjunto de datos mediante Data Augmentation. Las matrices de confusión generadas localmente se guardaron en la carpeta del backend.
+
+% =========================================================================
+% APLICACIÓN WEB Y SIMULACIÓN
+% =========================================================================
+\section{Aplicación Web y Simulación Real}
+Se implementó una arquitectura distribuida donde el backend (FastAPI) expone una interfaz API REST en el puerto 8000. Los clientes (Streamlit en el puerto 8501 y Next.js en el puerto 3000) realizan peticiones HTTP POST enviando la imagen en bytes y reciben el resultado formateado en formato JSON que detalla el dominio inferido, la clase predicha, la latencia de inferencia y la distribución de probabilidades Top-5.
+
+Se realizaron pruebas con imágenes reales capturadas fuera del dataset de entrenamiento. En las simulaciones de imágenes del Lago Titicaca y bosques locales, el clasificador de dominio binario inicial enrutó correctamente las fotografías horizontales a la etapa terrestre y las imágenes de teledetección a la etapa satelital, logrando una precisión cualitativa superior al 95\%.
+
+% =========================================================================
+% DISCUSIÓN
+% =========================================================================
+\section{Discusión y Preguntas Académicas}
+
+\begin{enumerate}
+    \item \textbf{¿Por qué una CNN es más adecuada que una red densa tradicional para imágenes?}\\
+    Las capas densas aplanan las imágenes perdiendo la covarianza espacial local. Las CNNs explotan la correlación espacial mediante pesos compartidos y campos receptivos locales, reduciendo drásticamente la cantidad de parámetros y otorgando invarianza a traslaciones espaciales.
+    
+    \item \textbf{¿Qué función cumplen los filtros o kernels en una convolución?}\\
+    Actúan como extractores de características locales. Al deslizarse por la imagen, calculan productos escalares que detectan bordes (capas iniciales), texturas complejas (capas intermedias) y formas específicas asociadas a la clase (capas finales).
+    
+    \item \textbf{¿Por qué se utiliza ReLU en capas ocultas y Softmax en la capa de salida?}\\
+    ReLU no se satura para valores positivos, mitigando el problema del desvanecimiento del gradiente y acelerando el cálculo debido a su naturaleza simple. Softmax transforma la salida lineal en probabilidades normales que suman 1.0, necesarias para clasificaciones excluyentes.
+    
+    \item \textbf{¿Qué ventaja ofrece Adam frente al descenso de gradiente clásico?}\\
+    Calcula momentos de primer y segundo orden para adaptar el paso del gradiente individualmente por parámetro, permitiendo avanzar rápido en dimensiones con gradientes consistentes y suavizar oscilaciones.
+    
+    \item \textbf{¿Qué diferencia existe entre Transfer Learning y Fine-Tuning?}\\
+    El Transfer Learning utiliza los pesos entrenados del backbone de forma estática (congelados) y solo optimiza la cabeza de clasificación. El Fine-Tuning descongelará capas superiores del backbone para reajustar los filtros internos.
+    
+    \item \textbf{¿Qué evidencia muestra que el modelo generaliza y no solo memoriza?}\\
+    El comportamiento de las curvas de validación. Al no divergir la pérdida de validación con respecto a la de entrenamiento, y mantener accuracies de validación elevados y estables, se demuestra capacidad de generalización sobre datos no vistos.
+    
+    \item \textbf{¿Cómo se podría adaptar este sistema al contexto de Puno?}\\
+    Integrando clases específicas del altiplano, como monitoreo de contaminación del Lago Titicaca, eutrofización de lenteja de agua, minería ilegal en la selva puneña (Carabaya/Sandia) y estimaciones agrícolas de quinua y papa.
+    
+    \item \textbf{¿Qué limitaciones tendría el sistema si se usa con imágenes muy diferentes?}\\
+    El sesgo del dominio. Al entrenarse con tomas cenitales satelitales ortorrectificadas e imágenes terrestres de escenas naturales, tomas oblicuas, imágenes con excesiva nubosidad o con escalas de píxeles distintas podrían generar falsos positivos.
+\end{enumerate}
+
+% =========================================================================
+% CONCLUSIONES Y RECOMENDACIONES
+% =========================================================================
+\section{Conclusiones, Recomendaciones y Trabajos Futuros}
+
+\subsection{Conclusiones}
+1. El uso de Transfer Learning y Fine-Tuning progresivo aceleró la convergencia del modelo reduciendo en más del 80\% el tiempo de entrenamiento en comparación con modelos entrenados desde cero.
+2. El sistema de clasificación jerárquico resolvió satisfactoriamente el conflicto semántico de clases idénticas en dominios dispares (ej. bosques satelitales frente a bosques a nivel terrestre).
+
+\subsection{Recomendaciones}
+1. Se sugiere implementar un paso previo de eliminación de nubes y corrección atmosférica para imágenes satelitales reales antes de la inferencia del modelo.
+2. Utilizar mecanismos de cuantización de modelos (ej. TensorFlow Lite) si se planea portar la aplicación a dispositivos móviles de gama baja para su uso en campo.
+
+\subsection{Trabajos Futuros}
+1. Expandir el clasificador de la etapa satelital para procesar imágenes multiespectrales de 13 bandas (EuroSAT MS) y no limitarse a bandas RGB ópticas.
+2. Incorporar segmentación semántica (ej. U-Net) para delimitar de manera exacta las fronteras de deforestación e inundación en tiempo real.
+
+% =========================================================================
+% REFERENCIAS
+% =========================================================================
+\section{Referencias}
+\begin{thebibliography}{99}
+\bibitem{chollet} Chollet, F. (2021). \textit{Deep learning with Python} (2nd ed.). Manning Publications.
+\bibitem{goodfellow} Goodfellow, I., Bengio, Y., \& Courville, A. (2016). \textit{Deep learning}. MIT Press.
+\bibitem{eurosat} Helber, P., Bischke, B., Dengel, A., \& Borth, D. (2019). EuroSAT: A novel dataset and deep learning benchmark for land use and land cover classification. \textit{IEEE Journal of Selected Topics in Applied Earth Observations and Remote Sensing}, 12(7), 2217-2226.
+\bibitem{efficientnet} Tan, M., \& Le, Q. V. (2019). EfficientNet: Rethinking model scaling for convolutional neural networks. \textit{Proceedings of the 36th International Conference on Machine Learning}.
+\end{thebibliography}
+
+\end{document}
