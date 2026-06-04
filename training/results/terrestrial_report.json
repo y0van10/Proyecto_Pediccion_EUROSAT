@@ -1,0 +1,51 @@
+{
+    "Buildings": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1-score": 0.0,
+        "support": 0.0
+    },
+    "Forest": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1-score": 0.0,
+        "support": 0.0
+    },
+    "Glacier": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1-score": 0.0,
+        "support": 0.0
+    },
+    "Mountain": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1-score": 0.0,
+        "support": 0.0
+    },
+    "Sea": {
+        "precision": 0.9310344827586207,
+        "recall": 0.9,
+        "f1-score": 0.9152542372881356,
+        "support": 30.0
+    },
+    "Street": {
+        "precision": 0.990990990990991,
+        "recall": 0.8461538461538461,
+        "f1-score": 0.9128630705394191,
+        "support": 130.0
+    },
+    "accuracy": 0.85625,
+    "macro avg": {
+        "precision": 0.3203375789582686,
+        "recall": 0.29102564102564105,
+        "f1-score": 0.3046862179712591,
+        "support": 160.0
+    },
+    "weighted avg": {
+        "precision": 0.9797491456974214,
+        "recall": 0.85625,
+        "f1-score": 0.9133114143048033,
+        "support": 160.0
+    }
+}

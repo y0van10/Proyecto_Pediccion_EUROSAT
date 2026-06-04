@@ -1,0 +1,56 @@
+services:
+  backend:
+    build: ./backend
+    container_name: eurosat-backend
+    volumes:
+      - ./backend/model:/app/model
+    environment:
+      - MODEL_PATH=model/modelo_final_eurosat.keras
+      # Restrict CORS in production, e.g.:
+      # - CORS_ORIGINS=https://yourdomain.com
+      - CORS_ORIGINS=*
+    ports:
+      - "8000:8000"
+    networks:
+      - eurosat-network
+    restart: always
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/v1/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  frontend:
+    build: ./frontend
+    container_name: eurosat-frontend
+    environment:
+      # Use relative path so the browser fetches from the same domain via Nginx.
+      # Override only if the frontend is served from a different domain than the API.
+      - NEXT_PUBLIC_API_URL=/api/v1
+    ports:
+      - "3000:3000"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - eurosat-network
+    restart: always
+
+  nginx:
+    image: nginx:alpine
+    container_name: eurosat-nginx
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "80:80"
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - eurosat-network
+    restart: always
+
+networks:
+  eurosat-network:
+    driver: bridge
