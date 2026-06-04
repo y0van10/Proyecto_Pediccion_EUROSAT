@@ -27,8 +27,7 @@ class ModelService:
         self.satellite_model_path = os.path.join(self.model_dir, "model", "satellite_classifier.keras")
         self.terrestrial_model_path = os.path.join(self.model_dir, "model", "terrestrial_classifier.keras")
         
-        # Alternativa para el modelo satelital anterior
-        self.old_satellite_model_path = os.path.join(self.model_dir, "model", "modelo_final_eurosat.keras")
+        
         
         self.domain_model = None
         self.satellite_model = None
@@ -49,7 +48,7 @@ class ModelService:
 
         # 2. Cargar clasificador satelital
         try:
-            sat_path = self.satellite_model_path if os.path.exists(self.satellite_model_path) else self.old_satellite_model_path
+            sat_path = self.satellite_model_path
             if os.path.exists(sat_path):
                 self.satellite_model = keras.models.load_model(sat_path, compile=False)
                 print(f"Satellite model loaded successfully from {sat_path}")
