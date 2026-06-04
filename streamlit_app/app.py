@@ -36,7 +36,9 @@ CLASS_TRANSLATIONS = {
 st.sidebar.title("🛰️ Panel de Control MLOps")
 st.sidebar.markdown("---")
 
-api_url = st.sidebar.text_input("URL del Servidor API", "http://localhost:8000/api/v1")
+# Cargar URL de la API de las variables de entorno si existe
+api_url_default = os.getenv("API_URL", "http://localhost:8000/api/v1")
+api_url = st.sidebar.text_input("URL del Servidor API", api_url_default)
 
 st.sidebar.subheader("Métricas de Entrenamiento")
 st.sidebar.markdown("""

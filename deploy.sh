@@ -4,8 +4,8 @@ set -e
 echo "🚀 Iniciando despliegue de EuroSAT AI..."
 
 # Verificar si el modelo existe
-if [ ! -f "backend/model/modelo_final_eurosat.keras" ]; then
-    echo "⚠️  ADVERTENCIA: No se encontró el modelo en backend/model/modelo_final_eurosat.keras"
+if [ ! -f "backend/model/satellite_classifier.keras" ]; then
+    echo "⚠️  ADVERTENCIA: No se encontró el modelo en backend/model/satellite_classifier.keras"
     echo "   El backend se ejecutará en modo MOCK (simulación)."
 fi
 
